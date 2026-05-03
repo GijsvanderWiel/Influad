@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="nl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Influad — Vind UGC Creators voor jouw merk</title>
+  <meta name="description" content="Influad verbindt bedrijven met UGC creators. Creators adverteren zichzelf voor €5/mnd. Bedrijven vinden de perfecte creator voor €29/mnd.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+  <style>
+    /* === DESIGN TOKENS === */
+    :root, [data-theme="light"] {
+      --color-bg: #f7f6f2;
+      --color-surface: #f9f8f5;
+      --color-surface-2: #fbfbf9;
+      --color-surface-offset: #f0ede8;
+      --color-border: #d4d1ca;
+      --color-divider: #dcd9d5;
+      --color-text: #28251d;
+      --color-text-muted: #7a7974;
+      --color-text-faint: #bab9b4;
+      --color-text-inverse: #f9f8f4;
+      --color-primary: #1a6b5a;
+      --color-primary-hover: #135247;
+      --color-primary-highlight: #d0e8e2;
+      --color-accent: #e8622a;
+      --color-accent-hover: #c9521f;
+      --shadow-sm: 0 1px 2px oklch(0.2 0.01 80 / 0.06);
+      --shadow-md: 0 4px 12px oklch(0.2 0.01 80 / 0.08);
+      --shadow-lg: 0 12px 32px oklch(0.2 0.01 80 / 0.12);
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-full: 9999px;
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+      --text-3xl: clamp(2.5rem, 1rem + 4vw, 5rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+      --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem;
+      --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+      --space-16: 4rem; --space-20: 5rem; --space-24: 6rem;
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      --content-default: 960px;
+      --content-narrow: 640px;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614;
+      --color-surface: #1c1b19;
+      --color-surface-2: #201f1d;
+      --color-surface-offset: #22211f;
+      --color-border: #393836;
+      --color-divider: #262523;
+      --color-text: #cdccca;
+      --color-text-muted: #797876;
+      --color-text-faint: #5a5957;
+      --color-text-inverse: #2b2a28;
+      --color-primary: #3da88e;
+      --color-primary-hover: #2a9278;
+      --color-primary-highlight: #1e3530;
+      --color-accent: #f07642;
+      --color-accent-hover: #e05e28;
+      --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2);
+      --shadow-md: 0 4px 12px oklch(0 0 0 / 0.3);
+      --shadow-lg: 0 12px 32px oklch(0 0 0 / 0.4);
+    }
+
+    /* === BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; scroll-padding-top: 5rem; }
+    body { font-family: var(--font-body); font-size: var(--text-base); color: var(--color-text); background: var(--color-bg); line-height: 1.6; min-height: 100dvh; }
+    img { display: block; max-width: 100%; height: auto; }
+    input, button, select { font: inherit; color: inherit; }
+    h1, h2, h3 { text-wrap: balance; }
+    p { text-wrap: pretty; max-width: 68ch; }
+    button { cursor: pointer; border: none; background: none; }
+    a, button { transition: color var(--transition), background var(--transition), box-shadow var(--transition), border-color var(--transition); }
+    ::selection { background: oklch(from var(--color-primary) l c h / 0.2); }
+    :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: var(--radius-sm); }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+    /* === LAYOUT === */
+    .container { max-width: var(--content-default); margin-inline: auto; padding-inline: var(--space-6); }
+    .container-narrow { max-width: var(--content-narrow); margin-inline: auto; padding-inline: var(--space-6); }
+
+    /* === NAVBAR === */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: oklch(from var(--color-bg) l c h / 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid oklch(from var(--color-text) l c h / 0.08);
+      padding: var(--space-4) 0;
+    }
+    nav .inner { max-width: var(--content-default); margin-inline: auto; padding-inline: var(--space-6); display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; color: var(--color-text); font-family: var(--font-display); font-size: var(--text-lg); font-weight: 400; }
+    .logo svg { flex-shrink: 0; }
+    .nav-actions { display: flex; align-items: center; gap: var(--space-3); }
+    .btn-ghost { padding: var(--space-2) var(--space-4); border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 500; color: var(--color-text-muted); text-decoration: none; }
+    .btn-ghost:hover { color: var(--color-text); background: oklch(from var(--color-text) l c h / 0.06); }
+    .btn-primary { padding: var(--space-2) var(--space-5); border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600; color: var(--color-text-inverse); background: var(--color-primary); text-decoration: none; display: inline-flex; align-items: center; gap: var(--space-2); }
+    .btn-primary:hover { background: var(--color-primary-hover); box-shadow: var(--shadow-md); }
+    .theme-toggle { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-full); color: var(--color-text-muted); }
+    .theme-toggle:hover { background: oklch(from var(--color-text) l c h / 0.06); color: var(--color-text); }
+
+    /* === HERO === */
+    .hero { padding: clamp(var(--space-16), 10vw, var(--space-24)) 0 clamp(var(--space-12), 8vw, var(--space-20)); text-align: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: var(--space-2); background: var(--color-primary-highlight); color: var(--color-primary); border-radius: var(--radius-full); padding: var(--space-1) var(--space-4); font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: var(--space-6); }
+    .hero h1 { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 400; line-height: 1.1; margin-bottom: var(--space-6); color: var(--color-text); }
+    .hero h1 em { font-style: italic; color: var(--color-primary); }
+    .hero-sub { font-size: var(--text-lg); color: var(--color-text-muted); max-width: 52ch; margin-inline: auto; margin-bottom: var(--space-10); line-height: 1.5; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; margin-bottom: var(--space-12); }
+    .btn-hero { padding: var(--space-4) var(--space-8); border-radius: var(--radius-full); font-size: var(--text-base); font-weight: 600; display: inline-flex; align-items: center; gap: var(--space-2); text-decoration: none; transition: all var(--transition); }
+    .btn-hero-primary { background: var(--color-primary); color: var(--color-text-inverse); }
+    .btn-hero-primary:hover { background: var(--color-primary-hover); box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+    .btn-hero-secondary { background: var(--color-surface); color: var(--color-text); border: 1px solid oklch(from var(--color-text) l c h / 0.12); }
+    .btn-hero-secondary:hover { background: var(--color-surface-offset); box-shadow: var(--shadow-sm); }
+    .hero-stats { display: flex; flex-wrap: wrap; gap: var(--space-8); justify-content: center; }
+    .stat { text-align: center; }
+    .stat-number { font-family: var(--font-display); font-size: var(--text-xl); color: var(--color-text); display: block; line-height: 1; margin-bottom: var(--space-1); }
+    .stat-label { font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* === HOW IT WORKS === */
+    .section { padding: clamp(var(--space-12), 8vw, var(--space-20)) 0; }
+    .section-label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-primary); margin-bottom: var(--space-3); text-align: center; }
+    .section-title { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 400; line-height: 1.2; margin-bottom: var(--space-4); text-align: center; }
+    .section-sub { font-size: var(--text-base); color: var(--color-text-muted); max-width: 52ch; line-height: 1.6; margin-bottom: var(--space-12); text-align: center; margin-inline: auto; }
+    .divider { border: none; border-top: 1px solid var(--color-divider); margin: 0; }
+
+    /* Two-column tabs */
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); max-width: 400px; margin-bottom: var(--space-10); background: var(--color-surface-offset); border-radius: var(--radius-xl); padding: var(--space-1); margin-inline: auto; }
+    .tab-btn { padding: var(--space-3) var(--space-5); border-radius: calc(var(--radius-xl) - 4px); font-size: var(--text-sm); font-weight: 600; color: var(--color-text-muted); cursor: pointer; border: none; background: none; transition: all var(--transition); }
+    .tab-btn.active { background: var(--color-surface-2); color: var(--color-text); box-shadow: var(--shadow-sm); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4); }
+
+    .step-card { background: var(--color-surface); border: 1px solid oklch(from var(--color-text) l c h / 0.07); border-radius: var(--radius-xl); padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); }
+    .step-number { width: 36px; height: 36px; border-radius: var(--radius-full); background: var(--color-primary-highlight); color: var(--color-primary); font-weight: 700; font-size: var(--text-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-card h3 { font-size: var(--text-base); font-weight: 700; line-height: 1.3; }
+    .step-card p { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; max-width: none; }
+
+    /* === PRICING === */
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-6); }
+    .pricing-card { background: var(--color-surface); border: 1px solid oklch(from var(--color-text) l c h / 0.08); border-radius: var(--radius-xl); padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-6); position: relative; overflow: hidden; }
+    .pricing-card.featured { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary), var(--shadow-md); }
+    .pricing-badge { position: absolute; top: var(--space-4); right: var(--space-4); background: var(--color-primary); color: var(--color-text-inverse); font-size: var(--text-xs); font-weight: 700; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); letter-spacing: 0.04em; }
+    .pricing-icon { width: 44px; height: 44px; border-radius: var(--radius-lg); background: var(--color-primary-highlight); display: flex; align-items: center; justify-content: center; color: var(--color-primary); }
+    .pricing-title { font-size: var(--text-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); }
+    .pricing-price { display: flex; align-items: baseline; gap: var(--space-1); }
+    .pricing-amount { font-family: var(--font-display); font-size: var(--text-2xl); color: var(--color-text); line-height: 1; }
+    .pricing-period { font-size: var(--text-sm); color: var(--color-text-muted); }
+    .pricing-note { font-size: var(--text-xs); color: var(--color-text-faint); margin-top: var(--space-1); }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); flex: 1; }
+    .pricing-features li { display: flex; align-items: flex-start; gap: var(--space-3); font-size: var(--text-sm); color: var(--color-text-muted); }
+    .pricing-features li::before { content: "✓"; color: var(--color-primary); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+    .btn-pricing { display: block; width: 100%; padding: var(--space-4); border-radius: var(--radius-lg); font-size: var(--text-sm); font-weight: 700; text-align: center; text-decoration: none; transition: all var(--transition); }
+    .btn-pricing-primary { background: var(--color-primary); color: var(--color-text-inverse); }
+    .btn-pricing-primary:hover { background: var(--color-primary-hover); box-shadow: var(--shadow-md); }
+    .btn-pricing-secondary { background: var(--color-surface-offset); color: var(--color-text); border: 1px solid oklch(from var(--color-text) l c h / 0.1); }
+    .btn-pricing-secondary:hover { background: var(--color-border); }
+
+    /* === WAITLIST === */
+    .waitlist-section { background: var(--color-surface); border-top: 1px solid var(--color-divider); border-bottom: 1px solid var(--color-divider); padding: clamp(var(--space-12), 8vw, var(--space-20)) 0; }
+    .waitlist-inner { text-align: center; }
+    .waitlist-inner .section-title { margin-bottom: var(--space-3); }
+    .waitlist-inner .section-sub { margin-inline: auto; margin-bottom: var(--space-10); }
+    .waitlist-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-6); max-width: 700px; margin-inline: auto; }
+    .waitlist-card { background: var(--color-surface-2); border: 1px solid oklch(from var(--color-text) l c h / 0.08); border-radius: var(--radius-xl); padding: var(--space-8); text-align: left; }
+    .waitlist-card-title { font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-2); }
+    .waitlist-card-sub { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-6); max-width: none; }
+    .waitlist-form { display: flex; flex-direction: column; gap: var(--space-3); }
+    .waitlist-form input { width: 100%; padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); border: 1px solid oklch(from var(--color-text) l c h / 0.15); background: var(--color-surface); font-size: var(--text-sm); color: var(--color-text); transition: border-color var(--transition), box-shadow var(--transition); }
+    .waitlist-form input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.15); }
+    .waitlist-form input::placeholder { color: var(--color-text-faint); }
+    .btn-submit { width: 100%; padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); font-size: var(--text-sm); font-weight: 700; color: var(--color-text-inverse); background: var(--color-primary); border: none; cursor: pointer; transition: all var(--transition); }
+    .btn-submit:hover { background: var(--color-primary-hover); box-shadow: var(--shadow-md); }
+    .btn-submit.accent { background: var(--color-accent); }
+    .btn-submit.accent:hover { background: var(--color-accent-hover); }
+    .form-success { display: none; text-align: center; padding: var(--space-6); }
+    .form-success-icon { font-size: 2rem; margin-bottom: var(--space-3); }
+    .form-success h3 { font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-2); }
+    .form-success p { font-size: var(--text-sm); color: var(--color-text-muted); max-width: none; }
+
+    /* === FOOTER === */
+    footer { padding: var(--space-10) 0; }
+    .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); }
+    .footer-copy { font-size: var(--text-xs); color: var(--color-text-faint); }
+    .footer-links { display: flex; gap: var(--space-6); }
+    .footer-links a { font-size: var(--text-xs); color: var(--color-text-faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--color-text-muted); }
+
+    .centered-section .section-label, .centered-section .section-title, .centered-section .section-sub { text-align: center; margin-inline: auto; }
+
+    /* === SCROLL ANIMATIONS === */
+    .fade-in { opacity: 1; }
+    @supports (animation-timeline: scroll()) {
+      .fade-in { opacity: 0; animation: reveal-fade linear both; animation-timeline: view(); animation-range: entry 0% entry 80%; }
+    }
+    @keyframes reveal-fade { to { opacity: 1; } }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 640px) {
+      .nav-actions .btn-ghost { display: none; }
+      .hero-cta { flex-direction: column; align-items: center; }
+      .btn-hero { width: 100%; max-width: 320px; justify-content: center; }
+      .tabs { max-width: 100%; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="inner">
+      <a href="#" class="logo" aria-label="Influad home">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <rect width="28" height="28" rx="8" fill="var(--color-primary)"/>
+          <path d="M7 14C7 10.13 10.13 7 14 7s7 3.13 7 7-3.13 7-7 7" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="14" cy="14" r="2.5" fill="white"/>
+        </svg>
+        Influad
+      </a>
+      <div class="nav-actions">
+        <a href="#hoe-werkt-het" class="btn-ghost">Hoe het werkt</a>
+        <a href="#prijzen" class="btn-ghost">Prijzen</a>
+        <button class="theme-toggle" data-theme-toggle aria-label="Wissel thema">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="#waitlist" class="btn-primary">Inschrijven</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container-narrow">
+      <div class="hero-badge">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="6"/></svg>
+        Binnenkort beschikbaar — schrijf je in
+      </div>
+      <h1>De marktplaats voor<br><em>UGC creators</em> & merken</h1>
+      <p class="hero-sub">Influad verbindt bedrijven met content creators. Creators adverteren zichzelf. Bedrijven vinden de perfecte match. Simpel, betaalbaar, effectief.</p>
+      <div class="hero-cta">
+        <a href="#waitlist" class="btn-hero btn-hero-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Inschrijven als creator
+        </a>
+        <a href="#waitlist" class="btn-hero btn-hero-secondary">
+          Inschrijven als bedrijf →
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">€5</span>
+          <span class="stat-label">per ad / per maand</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">€29</span>
+          <span class="stat-label">voor bedrijven / maand</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">0%</span>
+          <span class="stat-label">commissie</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- HOW IT WORKS -->
+  <section class="section centered-section" id="hoe-werkt-het">
+    <div class="container">
+      <p class="section-label fade-in">Hoe het werkt</p>
+      <h2 class="section-title fade-in">Voor elke kant van het platform</h2>
+      <p class="section-sub fade-in">Of je nu een creator bent die opdrachten zoekt, of een bedrijf dat authentieke content wil — Influad maakt het eenvoudig.</p>
+
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" role="tab" aria-selected="true" onclick="switchTab('creators', this)">Voor Creators</button>
+        <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('bedrijven', this)">Voor Bedrijven</button>
+      </div>
+
+      <div id="tab-creators" class="tab-content active">
+        <div class="step-card fade-in">
+          <div class="step-number">1</div>
+          <div>
+            <h3>Maak een gratis account aan</h3>
+            <p>Schrijf je in met je e-mailadres. Je profiel aanmaken is altijd gratis.</p>
+          </div>
+        </div>
+        <div class="step-card fade-in">
+          <div class="step-number">2</div>
+          <div>
+            <h3>Plaats een advertentie</h3>
+            <p>Vul je profiel in: niche, socials, statistieken en type samenwerking. Betaal €5/mnd en ga live.</p>
+          </div>
+        </div>
+        <div class="step-card fade-in">
+          <div class="step-number">3</div>
+          <div>
+            <h3>Word gevonden door merken</h3>
+            <p>Bedrijven doorzoeken het platform en nemen direct contact op via jouw socials.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-bedrijven" class="tab-content">
+        <div class="step-card fade-in">
+          <div class="step-number">1</div>
+          <div>
+            <h3>Abonneer voor €29/mnd</h3>
+            <p>Volledige toegang tot alle creators op het platform. Opzegbaar wanneer je wilt.</p>
+          </div>
+        </div>
+        <div class="step-card fade-in">
+          <div class="step-number">2</div>
+          <div>
+            <h3>Zoek en filter creators</h3>
+            <p>Filter op niche, geslacht, platform, volgersaantal en type samenwerking. Vind precies wie je zoekt.</p>
+          </div>
+        </div>
+        <div class="step-card fade-in">
+          <div class="step-number">3</div>
+          <div>
+            <h3>Neem direct contact op</h3>
+            <p>Klik door naar de socials van de creator en start de samenwerking. Geen commissie, geen tussenpersoon.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- PRICING -->
+  <section class="section centered-section" id="prijzen">
+    <div class="container">
+      <p class="section-label fade-in">Prijzen</p>
+      <h2 class="section-title fade-in">Transparant en eerlijk</h2>
+      <p class="section-sub fade-in">Geen verborgen kosten, geen commissies. Betaal alleen voor wat je gebruikt.</p>
+
+      <div class="pricing-grid">
+        <div class="pricing-card fade-in">
+          <div>
+            <div class="pricing-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+          </div>
+          <div>
+            <p class="pricing-title">Creator</p>
+            <div class="pricing-price">
+              <span class="pricing-amount">€5</span>
+              <span class="pricing-period">/ ad / maand</span>
+            </div>
+            <p class="pricing-note">incl. BTW — per actieve advertentie</p>
+          </div>
+          <ul class="pricing-features">
+            <li>Zichtbaar voor alle bedrijven op het platform</li>
+            <li>Koppel al je socials aan je profiel</li>
+            <li>Toon statistieken, niche en voorkeuren</li>
+            <li>Ontvang reviews van samenwerkingen</li>
+            <li>Meerdere ads mogelijk (elke ad €5/mnd)</li>
+            <li>Opzegbaar wanneer je wilt</li>
+          </ul>
+          <a href="#waitlist" class="btn-pricing btn-pricing-primary">Word creator</a>
+        </div>
+
+        <div class="pricing-card fade-in">
+          
+          <div>
+            <div class="pricing-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
+          </div>
+          <div>
+            <p class="pricing-title">Bedrijf</p>
+            <div class="pricing-price">
+              <span class="pricing-amount">€29</span>
+              <span class="pricing-period">/ maand</span>
+            </div>
+            <p class="pricing-note">incl. BTW — goedkoopste van Nederland</p>
+          </div>
+          <ul class="pricing-features">
+            <li>Toegang tot alle creator-profielen</li>
+            <li>Filteren op niche, platform, volgersaantal</li>
+            <li>Filter op betaald of gifted samenwerking</li>
+            <li>Direct contact via social media links</li>
+            <li>Reviews achterlaten na samenwerking</li>
+            <li>Opzegbaar wanneer je wilt</li>
+          </ul>
+          <a href="#waitlist" class="btn-pricing btn-pricing-primary">Word bedrijf</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- WAITLIST -->
+  <section class="waitlist-section" id="waitlist">
+    <div class="container">
+      <div class="waitlist-inner">
+        <p class="section-label">Waitlist</p>
+        <h2 class="section-title">Wees er als eerste bij</h2>
+        <p class="section-sub">Influad lanceert binnenkort. Schrijf je nu in en ontvang een <strong>gratis eerste maand</strong> bij lancering.</p>
+        <div class="waitlist-cards">
+
+          <div class="waitlist-card">
+            <h3 class="waitlist-card-title">Ik ben een Creator</h3>
+            <p class="waitlist-card-sub">Schrijf je in en adverteer jezelf gratis in je eerste maand.</p>
+            <div id="creator-form-wrap">
+              <form class="waitlist-form" onsubmit="handleSubmit(event, 'creator')">
+                <input type="text" name="name" placeholder="Je naam" required autocomplete="name">
+                <input type="email" name="email" placeholder="Je e-mailadres" required autocomplete="email">
+                <button type="submit" class="btn-submit">Inschrijven als creator →</button>
+              </form>
+            </div>
+            <div class="form-success" id="creator-success">
+              <div class="form-success-icon">🎉</div>
+              <h3>Gelukt! Je staat op de lijst.</h3>
+              <p>We laten je weten zodra Influad live gaat. Je eerste maand is gratis.</p>
+            </div>
+          </div>
+
+          <div class="waitlist-card">
+            <h3 class="waitlist-card-title">Ik ben een Bedrijf</h3>
+            <p class="waitlist-card-sub">Schrijf je in en probeer het platform gratis bij lancering.</p>
+            <div id="bedrijf-form-wrap">
+              <form class="waitlist-form" onsubmit="handleSubmit(event, 'bedrijf')">
+                <input type="text" name="name" placeholder="Je naam / bedrijfsnaam" required autocomplete="organization">
+                <input type="email" name="email" placeholder="Je e-mailadres" required autocomplete="email">
+                <button type="submit" class="btn-submit accent">Inschrijven als bedrijf →</button>
+              </form>
+            </div>
+            <div class="form-success" id="bedrijf-success">
+              <div class="form-success-icon">🎉</div>
+              <h3>Gelukt! Je staat op de lijst.</h3>
+              <p>We laten je weten zodra Influad live gaat. Je eerste maand is gratis.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <a href="#" class="logo" style="font-size: var(--text-base);">
+          <svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <rect width="28" height="28" rx="8" fill="var(--color-primary)"/>
+            <path d="M7 14C7 10.13 10.13 7 14 7s7 3.13 7 7-3.13 7-7 7" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="2.5" fill="white"/>
+          </svg>
+          Influad
+        </a>
+        <p class="footer-copy">© 2026 Influad. Alle rechten voorbehouden.</p>
+        <nav class="footer-links" aria-label="Footer navigatie">
+          <a href="#">Privacy</a>
+          <a href="#">Voorwaarden</a>
+          <a href="mailto:info@influad.com">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme toggle
+    (function(){
+      const t = document.querySelector('[data-theme-toggle]');
+      const r = document.documentElement;
+      let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+      r.setAttribute('data-theme', d);
+      const icons = {
+        light: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',
+        dark: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+      };
+      if (t) {
+        t.innerHTML = icons[d === 'dark' ? 'light' : 'dark'];
+        t.addEventListener('click', () => {
+          d = d === 'dark' ? 'light' : 'dark';
+          r.setAttribute('data-theme', d);
+          t.innerHTML = icons[d === 'dark' ? 'light' : 'dark'];
+          t.setAttribute('aria-label', 'Wissel naar ' + (d === 'dark' ? 'licht' : 'donker') + ' thema');
+        });
+      }
+    })();
+
+    // Tab switching
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    // Waitlist form submission
+    // TODO: Koppel aan Supabase — vervang deze functie met een Supabase insert
+    function handleSubmit(e, type) {
+      e.preventDefault();
+      const form = e.target;
+      const name = form.querySelector('[name="name"]').value;
+      const email = form.querySelector('[name="email"]').value;
+
+      // Supabase integratie komt hier:
+      // const { data, error } = await supabase.from('waitlist').insert([{ name, email, type }]);
+
+      console.log('Waitlist entry:', { name, email, type });
+
+      // Toon succes
+      document.getElementById(type + '-form-wrap').style.display = 'none';
+      document.getElementById(type + '-success').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
