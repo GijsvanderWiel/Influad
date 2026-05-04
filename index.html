@@ -418,11 +418,13 @@
             <h3 class="waitlist-card-title">Ik ben een Creator</h3>
             <p class="waitlist-card-sub">Schrijf je in en adverteer jezelf gratis in je eerste maand.</p>
             <div id="creator-form-wrap">
-              <form class="waitlist-form" onsubmit="handleSubmit(event, 'creator')">
-                <input type="text" name="name" placeholder="Je naam" required autocomplete="name">
-                <input type="email" name="email" placeholder="Je e-mailadres" required autocomplete="email">
-                <button type="submit" class="btn-submit">Inschrijven als creator →</button>
-              </form>
+             <form class="waitlist-form" onsubmit="handleSubmit(event, 'creator')">
+  <p id="creator-status" class="form-status" aria-live="polite"></p>
+  <input type="text" name="name" placeholder="Je naam" required autocomplete="name">
+  <input type="email" name="email" placeholder="Je e-mailadres" required autocomplete="email">
+  <input type="tel" name="phone" placeholder="Je telefoonnummer (optioneel)">
+  <button type="submit" class="btn-submit">Inschrijven als creator →</button>
+</form>
             </div>
             <div class="form-success" id="creator-success">
               <div class="form-success-icon">🎉</div>
@@ -432,21 +434,23 @@
           </div>
 
           <div class="waitlist-card">
-            <h3 class="waitlist-card-title">Ik ben een Bedrijf</h3>
-            <p class="waitlist-card-sub">Schrijf je in en probeer het platform gratis bij lancering.</p>
-            <div id="bedrijf-form-wrap">
-              <form class="waitlist-form" onsubmit="handleSubmit(event, 'bedrijf')">
-                <input type="text" name="name" placeholder="Je naam / bedrijfsnaam" required autocomplete="organization">
-                <input type="email" name="email" placeholder="Je e-mailadres" required autocomplete="email">
-                <button type="submit" class="btn-submit accent">Inschrijven als bedrijf →</button>
-              </form>
-            </div>
-            <div class="form-success" id="bedrijf-success">
-              <div class="form-success-icon">🎉</div>
-              <h3>Gelukt! Je staat op de lijst.</h3>
-              <p>We laten je weten zodra Influad live gaat. Je eerste maand is gratis.</p>
-            </div>
-          </div>
+  <h3 class="waitlist-card-title">Ik ben een Bedrijf</h3>
+  <p class="waitlist-card-sub">Schrijf je in en probeer het platform gratis bij lancering.</p>
+  <div id="bedrijf-form-wrap">
+    <form class="waitlist-form" onsubmit="handleSubmit(event, 'bedrijf')">
+      <p id="bedrijf-status" class="form-status" aria-live="polite"></p>
+      <input type="text" name="name" placeholder="Je naam / bedrijfsnaam" required autocomplete="organization">
+      <input type="email" name="email" placeholder="Je e-mailadres" required autocomplete="email">
+      <input type="tel" name="phone" placeholder="Je telefoonnummer (optioneel)">
+      <button type="submit" class="btn-submit accent">Inschrijven als bedrijf →</button>
+    </form>
+  </div>
+  <div class="form-success" id="bedrijf-success">
+    <div class="form-success-icon">✨</div>
+    <h3>Gelukt! Je staat op de lijst.</h3>
+    <p>We laten je weten zodra Influad live gaat. Je eerste maand is gratis.</p>
+  </div>
+</div>
 
         </div>
       </div>
@@ -475,55 +479,82 @@
     </div>
   </footer>
 
-  <script>
-    // Theme toggle
-    (function(){
-      const t = document.querySelector('[data-theme-toggle]');
-      const r = document.documentElement;
-      let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
-      r.setAttribute('data-theme', d);
-      const icons = {
-        light: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',
-        dark: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
-      };
-      if (t) {
-        t.innerHTML = icons[d === 'dark' ? 'light' : 'dark'];
-        t.addEventListener('click', () => {
-          d = d === 'dark' ? 'light' : 'dark';
-          r.setAttribute('data-theme', d);
-          t.innerHTML = icons[d === 'dark' ? 'light' : 'dark'];
-          t.setAttribute('aria-label', 'Wissel naar ' + (d === 'dark' ? 'licht' : 'donker') + ' thema');
-        });
-      }
-    })();
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabase = window.supabase.createClient(
+    'https://wrnszicuiclhcggfqice.supabase.co',
+    'sb_publishable_jjG_I3pUvrBvTS8orslqfA_yfRyZhBC'
+  );
 
-    // Tab switching
-    function switchTab(tab, btn) {
-      document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      document.getElementById('tab-' + tab).classList.add('active');
+  // Theme toggle
+  (function(){
+    const t = document.querySelector('[data-theme-toggle]');
+    const r = document.documentElement;
+    let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+    r.setAttribute('data-theme', d);
+    const icons = {
+      light: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',
+      dark: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+    };
+    if (t) {
+      t.innerHTML = icons[d === 'dark' ? 'light' : 'dark'];
+      t.addEventListener('click', () => {
+        d = d === 'dark' ? 'light' : 'dark';
+        r.setAttribute('data-theme', d);
+        t.innerHTML = icons[d === 'dark' ? 'light' : 'dark'];
+        t.setAttribute('aria-label', 'Wissel naar ' + (d === 'dark' ? 'licht' : 'donker') + ' thema');
+      });
+    }
+  })();
+
+  // Tab switching
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    document.getElementById('tab-' + tab).classList.add('active');
+  }
+
+  // Waitlist form submission
+  async function handleSubmit(e, type) {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.querySelector('[name="name"]').value.trim();
+    const phone = form.querySelector('[name="phone"]').value.trim();
+    const email = form.querySelector('[name="email"]').value.trim();
+    const button = form.querySelector('button[type="submit"]');
+    const statusEl = document.getElementById(type + '-status');
+
+    if (!name || !email) {
+      statusEl.textContent = 'Vul je naam en e-mailadres in.';
+      statusEl.className = 'form-status error';
+      return;
     }
 
-    // Waitlist form submission
-    // TODO: Koppel aan Supabase — vervang deze functie met een Supabase insert
-    function handleSubmit(e, type) {
-      e.preventDefault();
-      const form = e.target;
-      const name = form.querySelector('[name="name"]').value;
-      const email = form.querySelector('[name="email"]').value;
+    button.disabled = true;
+    button.textContent = 'Versturen...';
+    statusEl.textContent = '';
 
-      // Supabase integratie komt hier:
-      // const { data, error } = await supabase.from('waitlist').insert([{ name, email, type }]);
+    try {
+      const { error } = await supabase.from('waitlist').insert([
+        { name, email, phone, type }
+      ]);
+      if (error) throw error;
 
-      console.log('Waitlist entry:', { name, email, type });
-
-      // Toon succes
       document.getElementById(type + '-form-wrap').style.display = 'none';
       document.getElementById(type + '-success').style.display = 'block';
+    } catch (err) {
+      statusEl.textContent = 'Er ging iets mis. Probeer het opnieuw.';
+      statusEl.className = 'form-status error';
+    } finally {
+      button.disabled = false;
+      button.textContent = type === 'creator'
+        ? 'Inschrijven als creator →'
+        : 'Inschrijven als bedrijf →';
     }
-  </script>
+  }
+</script>
 
 </body>
 </html>
