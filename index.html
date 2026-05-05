@@ -474,8 +474,7 @@
         </a>
         <p class="footer-copy">© 2026 Influad. Alle rechten voorbehouden.</p>
         <nav class="footer-links" aria-label="Footer navigatie">
-          <a href="#">Privacy</a>
-          <a href="#">Voorwaarden</a>
+          <a href="/privacy.html">Privacy</a>
           <a href="mailto:info@influad.com">Contact</a>
         </nav>
       </div>
@@ -559,13 +558,29 @@
     }
 
     button.disabled = true;
-    button.textContent = 'Versturen...';
+    button.textContent = 'Controleren...';
     statusEl.textContent = '';
 
     try {
       if (!supabaseClient) throw new Error('not_initialized');
+
+      // Check database for existing email before inserting
+      const { data: existing } = await supabaseClient
+        .from('waitlist')
+        .select('id')
+        .eq('email', email.toLowerCase())
+        .eq('type', type)
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        localStorage.setItem('waitlist_' + type, email.toLowerCase());
+        statusEl.textContent = 'Je staat al op de lijst met dit e-mailadres!';
+        statusEl.className = 'form-status info';
+        return;
+      }
+
       const { error } = await supabaseClient.from('waitlist').insert([
-        { name, email, phone: phone || null, type }
+        { name, email: email.toLowerCase(), phone: phone || null, type }
       ]);
       if (error) throw error;
 
