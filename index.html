@@ -524,6 +524,16 @@
     document.getElementById('tab-' + tab).classList.add('active');
   }
 
+  // On page load: restore success state if already signed up
+  function restoreSignedUpState(type) {
+    if (localStorage.getItem('waitlist_' + type)) {
+      document.getElementById(type + '-form-wrap').style.display = 'none';
+      document.getElementById(type + '-success').style.display = 'block';
+    }
+  }
+  restoreSignedUpState('creator');
+  restoreSignedUpState('bedrijf');
+
   // Waitlist form submission
   async function handleSubmit(e, type) {
     e.preventDefault();
@@ -540,6 +550,14 @@
       return;
     }
 
+    // Client-side duplicate guard
+    const storedEmail = localStorage.getItem('waitlist_' + type);
+    if (storedEmail && storedEmail === email.toLowerCase()) {
+      statusEl.textContent = 'Je staat al op de lijst met dit e-mailadres!';
+      statusEl.className = 'form-status info';
+      return;
+    }
+
     button.disabled = true;
     button.textContent = 'Versturen...';
     statusEl.textContent = '';
@@ -551,11 +569,13 @@
       ]);
       if (error) throw error;
 
+      localStorage.setItem('waitlist_' + type, email.toLowerCase());
       document.getElementById(type + '-form-wrap').style.display = 'none';
       document.getElementById(type + '-success').style.display = 'block';
     } catch (err) {
       const isDuplicate = err?.code === '23505' || (err?.message || '').includes('duplicate');
       if (isDuplicate) {
+        localStorage.setItem('waitlist_' + type, email.toLowerCase());
         statusEl.textContent = 'Je staat al op de lijst met dit e-mailadres!';
         statusEl.className = 'form-status info';
       } else {
